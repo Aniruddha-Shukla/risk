@@ -16,6 +16,9 @@ public class TransactionRepository {
                                      int score, String riskLevel, List<String> reasons) {
     }
 
+    public record DashboardStats(int accounts, int transactions, int flagged, BigDecimal flaggedAmount) {
+    }
+
     private static final String REASON_SEPARATOR = "; ";
 
     public List<Transaction> getAllTransactions() throws SQLException {
@@ -114,6 +117,28 @@ public class TransactionRepository {
                 connection.rollback();
                 throw e;
             }
+        }
+    }
+
+    /** Headline numbers for the dashboard, aggregated in the database rather than in Java. */
+    public DashboardStats getStats() throws SQLException {
+
+        String sql = "SELECT (SELECT COUNT(*) FROM accounts) AS accounts, " +
+                "(SELECT COUNT(*) FROM transactions) AS transactions, " +
+                "COUNT(*) AS flagged, COALESCE(SUM(t.amount), 0) AS flagged_amount " +
+                "FROM risk_scores r JOIN transactions t ON t.id = r.transaction_id WHERE r.flagged";
+
+        try (Connection connection = DatabaseConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            resultSet.next();
+            return new DashboardStats(
+                    resultSet.getInt("accounts"),
+                    resultSet.getInt("transactions"),
+                    resultSet.getInt("flagged"),
+                    resultSet.getBigDecimal("flagged_amount")
+            );
         }
     }
 

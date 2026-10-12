@@ -1,12 +1,12 @@
 import { formatAmount, formatTime } from '../format'
 import RiskBadge from './RiskBadge'
 
-export default function FlaggedTransactions({ transactions, loading, onRefresh }) {
+export default function FlaggedTransactions({ transactions, total, loading, onRefresh }) {
   return (
     <section className="card">
       <div className="card-header">
         <h2>
-          Flagged transactions <span className="count">{transactions.length}</span>
+          Flagged transactions <span className="count">{total ?? transactions.length}</span>
         </h2>
         <button className="secondary" onClick={onRefresh} disabled={loading}>
           {loading ? 'Loading…' : 'Refresh'}
@@ -49,6 +49,10 @@ export default function FlaggedTransactions({ transactions, loading, onRefresh }
             </tbody>
           </table>
         </div>
+      )}
+
+      {total > transactions.length && (
+        <p className="muted small">Showing the latest {transactions.length} of {total}.</p>
       )}
     </section>
   )

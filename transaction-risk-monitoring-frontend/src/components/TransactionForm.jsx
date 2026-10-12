@@ -7,12 +7,19 @@ const EMPTY_FIELDS = { amount: '', merchant: '' }
 
 export default function TransactionForm({ accounts, onSubmitted }) {
   const [accountId, setAccountId] = useState('')
+  const [search, setSearch] = useState('')
   const [fields, setFields] = useState(EMPTY_FIELDS)
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
 
-  const selectedId = accountId || accounts[0]?.id || ''
+  const query = search.trim().toLowerCase()
+  const matches = query
+    ? accounts.filter((account) => `${account.accountNumber} ${account.name}`.toLowerCase().includes(query))
+    : accounts
+
+  // Keep the selection inside the filtered list
+  const selectedId = matches.some((account) => account.id === Number(accountId)) ? accountId : matches[0]?.id || ''
   const selectedAccount = accounts.find((account) => account.id === Number(selectedId))
 
   const update = (key) => (event) => setFields({ ...fields, [key]: event.target.value })
@@ -45,8 +52,11 @@ export default function TransactionForm({ accounts, onSubmitted }) {
       <form className="form" onSubmit={handleSubmit}>
         <label>
           Account
+          <input type="search" placeholder={`Search ${accounts.length} accounts by name or number`}
+                 value={search} onChange={(event) => setSearch(event.target.value)} />
           <select value={selectedId} onChange={(event) => setAccountId(event.target.value)} required>
-            {accounts.map((account) => (
+            {matches.length === 0 && <option value="">No matching accounts</option>}
+            {matches.map((account) => (
               <option key={account.id} value={account.id}>
                 {account.accountNumber} · {account.name}
               </option>

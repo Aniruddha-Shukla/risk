@@ -76,6 +76,8 @@ public class Main {
 
         app.get("/api/transactions/flagged", ctx -> ctx.json(transactionRepository.getFlaggedTransactions()));
 
+        app.get("/api/stats", ctx -> ctx.json(transactionRepository.getStats()));
+
         app.post("/api/transactions", ctx -> {
 
             Transaction transaction = parseTransaction(ctx);

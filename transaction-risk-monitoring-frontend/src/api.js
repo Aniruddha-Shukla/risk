@@ -19,6 +19,8 @@ export const getAccounts = () => request('/api/accounts')
 
 export const getFlaggedTransactions = () => request('/api/transactions/flagged')
 
+export const getStats = () => request('/api/stats')
+
 export const submitTransaction = (transaction) =>
   request('/api/transactions', {
     method: 'POST',
