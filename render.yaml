@@ -1,0 +1,22 @@
+# Render Blueprint: New > Blueprint > pick this repo.
+# Values marked sync: false are prompted for in the Render dashboard (never commit them).
+services:
+  - type: web
+    name: transaction-risk-backend
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /health
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: RISK_FLAG_THRESHOLD
+        value: "50"
+      - key: RISK_LARGE_AMOUNT
+        value: "50000"
+      - key: RISK_AVG_MULTIPLIER
+        value: "3"
+      - key: RISK_VELOCITY_LIMIT
+        value: "3"
