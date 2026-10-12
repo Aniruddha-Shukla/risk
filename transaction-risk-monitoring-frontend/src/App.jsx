@@ -18,7 +18,7 @@ export default function App() {
       const [accountList, flaggedList, dashboardStats] = await Promise.all([
         getAccounts(),
         getFlaggedTransactions(),
-        getStats(),
+        getStats().catch(() => null), // tiles are optional; never block the core dashboard
       ])
       setAccounts(accountList)
       setFlagged(flaggedList)
