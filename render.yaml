@@ -5,7 +5,12 @@ services:
     name: transaction-risk-backend
     runtime: docker
     plan: free
-    dockerfilePath: ./Dockerfile
+    # Backend lives in a subfolder of this repo
+    dockerfilePath: ./transaction-risk-monitoring-backend/Dockerfile
+    dockerContext: ./transaction-risk-monitoring-backend
+    buildFilter:
+      paths:
+        - transaction-risk-monitoring-backend/**
     healthCheckPath: /health
     envVars:
       - key: DATABASE_URL
